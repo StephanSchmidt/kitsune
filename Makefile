@@ -31,5 +31,15 @@ sec: audit
 	go tool gosec ./...
 	# go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
-test: go-imports 
+test: go-imports
 	go tool gotestsum ./...
+
+build: go-imports test ## Build the project and update code coverage in README
+	@echo "Building project and updating coverage..."
+	@./update_coverage.sh
+	@echo "Build complete!"
+
+coverage: ## Generate and display code coverage
+	go test -coverprofile=coverage.out ./...
+	go tool cover -func=coverage.out
+	@rm -f coverage.out
