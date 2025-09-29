@@ -22,7 +22,7 @@ lint:
 	go tool staticcheck ./...
 	golangci-lint run ./...
 
-sec: audit
+sec: audit ## Run scurity check
 	go tool gosec  ./... 
 	go tool govulncheck  ./...
 
@@ -30,14 +30,14 @@ audit:
 	# Error: An error occurred: [401 Unauthorized] error accessing OSS Index
 	# go list -json -deps ./... | go tool github.com/sonatype-nexus-community/nancy sleuth --loud
 
-upgrade-deps:
+upgrade-deps: ## Upgrade dependencies
 	go get -u ./...
 	go mod tidy
 	go tool gotestsum  ./...
 
-alltest:  go-imports lint sec nilcheck test
+alltest:  go-imports lint sec nilcheck test ## Run all tests
 
-test:
+test: ## Run tests
 	go tool gotestsum ./...
 
 coverage: ## Generate and display code coverage
