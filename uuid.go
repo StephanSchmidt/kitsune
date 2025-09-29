@@ -13,7 +13,7 @@ func NewUuid() uuid.UUID {
 func FromString(uuidStr string) (uuid.UUID, error) {
 	u, err := uuid.FromString(uuidStr)
 	if err != nil {
-		return uuid.UUID{}, err
+		return uuid.UUID{}, WrapWithDetails(err, "uuid", uuidStr)
 	}
 	return u, nil
 }
@@ -29,7 +29,7 @@ func FromStringMust(uuidStr string) uuid.UUID {
 func FromByteArray(uuidBytes []byte) (uuid.UUID, error) {
 	u, err := uuid.FromBytes(uuidBytes)
 	if err != nil {
-		return uuid.UUID{}, err
+		return uuid.UUID{}, WrapWithDetails(err, "uuid", uuidBytes)
 	}
 	return u, nil
 }
