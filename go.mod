@@ -5,20 +5,20 @@ go 1.24.0
 toolchain go1.24.4
 
 tool (
+	github.com/securego/gosec/v2/cmd/gosec
+	github.com/sonatype-nexus-community/nancy
+	go.uber.org/nilaway/cmd/nilaway
 	golang.org/x/tools/cmd/goimports
+	golang.org/x/vuln/cmd/govulncheck
 	gotest.tools/gotestsum
+	honnef.co/go/tools/cmd/staticcheck
 )
 
 require (
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/rs/zerolog v1.34.0
-	github.com/securego/gosec/v2 v2.22.9
-	github.com/sonatype-nexus-community/nancy v1.0.52
 	github.com/stretchr/testify v1.11.1
 	gitlab.com/tozd/go/errors v0.10.0
-	golang.org/x/tools v0.37.0
-	gotest.tools/gotestsum v1.13.0
-	honnef.co/go/tools v0.6.1
 )
 
 require (
@@ -59,10 +59,11 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jedib0t/go-pretty/v6 v6.0.4 // indirect
 	github.com/jmank88/nuts v0.4.0 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -75,9 +76,11 @@ require (
 	github.com/recoilme/pudge v1.0.3 // indirect
 	github.com/rhysd/go-github-selfupdate v1.2.3 // indirect
 	github.com/sdboyer/constext v0.0.0-20170321163424-836a14457353 // indirect
+	github.com/securego/gosec/v2 v2.22.9 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.6.0 // indirect
 	github.com/sonatype-nexus-community/go-sona-types v0.1.6 // indirect
+	github.com/sonatype-nexus-community/nancy v1.0.52 // indirect
 	github.com/spf13/afero v1.1.2 // indirect
 	github.com/spf13/cast v1.3.0 // indirect
 	github.com/spf13/cobra v1.0.0 // indirect
@@ -97,6 +100,7 @@ require (
 	go.opentelemetry.io/otel v1.37.0 // indirect
 	go.opentelemetry.io/otel/metric v1.37.0 // indirect
 	go.opentelemetry.io/otel/trace v1.37.0 // indirect
+	go.uber.org/nilaway v0.0.0-20250821055425-361559d802f0 // indirect
 	golang.org/x/crypto v0.42.0 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20231108232855-2478ac86f678 // indirect
 	golang.org/x/mod v0.28.0 // indirect
@@ -107,7 +111,10 @@ require (
 	golang.org/x/telemetry v0.0.0-20250908211612-aef8a434d053 // indirect
 	golang.org/x/term v0.35.0 // indirect
 	golang.org/x/text v0.29.0 // indirect
+	golang.org/x/tools v0.37.0 // indirect
 	golang.org/x/tools/go/expect v0.1.1-deprecated // indirect
+	golang.org/x/tools/go/packages/packagestest v0.1.1-deprecated // indirect
+	golang.org/x/vuln v1.1.4 // indirect
 	google.golang.org/genai v1.25.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250818200422-3122310a409c // indirect
 	google.golang.org/grpc v1.75.0 // indirect
@@ -115,4 +122,6 @@ require (
 	gopkg.in/ini.v1 v1.60.1 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gotest.tools/gotestsum v1.13.0 // indirect
+	honnef.co/go/tools v0.6.1 // indirect
 )
