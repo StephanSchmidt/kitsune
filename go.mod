@@ -1,4 +1,4 @@
-module github.com/stephan/kitsune
+module github.com/StephanSchmidt/kitsune
 
 go 1.24.0
 
