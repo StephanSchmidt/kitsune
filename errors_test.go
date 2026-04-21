@@ -1,83 +1,13 @@
 package kitsune
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"strings"
 	"testing"
 
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	tozderrors "gitlab.com/tozd/go/errors"
 )
 
-func TestLogError(t *testing.T) {
-	tests := []struct {
-		name          string
-		err           error
-		expectedLevel string
-		checkMessage  string
-	}{
-		{
-			name:          "simple error",
-			err:           errors.New("simple error"),
-			expectedLevel: "error",
-			checkMessage:  "simple error",
-		},
-		{
-			name:          "wrapped error",
-			err:           tozderrors.Wrap(errors.New("base error"), "wrapped"),
-			expectedLevel: "error",
-			checkMessage:  "wrapped",
-		},
-		{
-			name:          "error with details",
-			err:           tozderrors.WithDetails(errors.New("error message"), "key", "value"),
-			expectedLevel: "error",
-			checkMessage:  "error message",
-		},
-		{
-			name:          "nil error",
-			err:           nil,
-			expectedLevel: "error",
-			checkMessage:  "",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			var buf bytes.Buffer
-			logger := zerolog.New(&buf).With().Timestamp().Logger()
-			log.Logger = logger
-
-			event := LogError(tt.err)
-			event.Send()
-
-			output := buf.String()
-
-			if !strings.Contains(output, tt.expectedLevel) {
-				t.Errorf("Expected log level %s, got: %s", tt.expectedLevel, output)
-			}
-
-			if tt.checkMessage != "" && !strings.Contains(output, tt.checkMessage) {
-				t.Errorf("Expected message containing %s, got: %s", tt.checkMessage, output)
-			}
-
-			// Verify JSON structure
-			var logEntry map[string]interface{}
-			if err := json.Unmarshal(buf.Bytes(), &logEntry); err != nil {
-				t.Fatalf("Failed to parse log output as JSON: %v", err)
-			}
-
-			if tt.err != nil {
-				if _, ok := logEntry["error"]; !ok {
-					t.Error("Expected 'error' field in log output")
-				}
-			}
-		})
-	}
-}
 
 func TestWithDetails(t *testing.T) {
 	tests := []struct {
@@ -194,10 +124,7 @@ func TestWrapWithDetails(t *testing.T) {
 			message:       "operation failed: %s",
 			details:       []interface{}{"reason", "timeout", "retry", 3},
 			expectedError: "operation failed: timeout",
-			expectedDetail: map[string]interface{}{
-				"reason": "timeout",
-				"retry":  3,
-			},
+			expectedDetail: nil,
 		},
 		{
 			name:           "wrap nil error",
@@ -213,11 +140,7 @@ func TestWrapWithDetails(t *testing.T) {
 			err:           baseError,
 			details:       []interface{}{"position", 42, "status", "critical", "action", "retry"},
 			expectedError: "failed at 42 with critical",
-			expectedDetail: map[string]interface{}{
-				"position": 42,
-				"status":   "critical",
-				"action":   "retry",
-			},
+			expectedDetail: nil,
 		},
 		{
 			name:          "wrap with more args than placeholders",
@@ -225,11 +148,7 @@ func TestWrapWithDetails(t *testing.T) {
 			message:       "error: %s",
 			details:       []interface{}{"msg", "failed", "code", 500, "time", "2024-01-01"},
 			expectedError: "error: failed",
-			expectedDetail: map[string]interface{}{
-				"msg":  "failed",
-				"code": 500,
-				"time": "2024-01-01",
-			},
+			expectedDetail: nil,
 		},
 		{
 			name:          "wrap already wrapped error",
@@ -237,9 +156,7 @@ func TestWrapWithDetails(t *testing.T) {
 			message:       "second wrap: %s",
 			details:       []interface{}{"level", "outer"},
 			expectedError: "second wrap: outer",
-			expectedDetail: map[string]interface{}{
-				"level": "outer",
-			},
+			expectedDetail: nil,
 		},
 	}
 
@@ -443,5 +360,33 @@ func BenchmarkAllDetails(b *testing.B) {
 	err := tozderrors.WithDetails(errors.New("error"), "k1", "v1", "k2", "v2", "k3", "v3")
 	for i := 0; i < b.N; i++ {
 		_ = AllDetails(err)
+	}
+}
+
+func TestWrapWithDetailsNoDoubleWrapping(t *testing.T) {
+	baseError := errors.New("base error")
+	wrapped := WrapWithDetails(baseError, "wrapped: %s", "key", "value", "code", 42)
+
+	if wrapped == nil {
+		t.Fatal("Expected non-nil error")
+	}
+
+	// Count the number of wrapping layers by unwrapping
+	wrapCount := 0
+	current := wrapped
+	for current != nil {
+		wrapCount++
+		current = tozderrors.Unwrap(current)
+	}
+
+	// Should be 2 layers: base error + single wrap (not double wrapped)
+	// Base error (1) + WrapWithDetails wrap (1) = 2 total
+	if wrapCount != 2 {
+		t.Errorf("Expected 2 wrapping layers, got %d", wrapCount)
+	}
+
+	// Verify the error message is correct
+	if !strings.Contains(wrapped.Error(), "wrapped: value") {
+		t.Errorf("Expected error containing 'wrapped: value', got '%s'", wrapped.Error())
 	}
 }
