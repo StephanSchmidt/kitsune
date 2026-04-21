@@ -14,3 +14,7 @@
 
 Last updated: Mon Sep 29 20:26:02 CEST 2025
 <!-- COVERAGE:END -->
+
+## License
+
+MIT — see [LICENSE](LICENSE).
