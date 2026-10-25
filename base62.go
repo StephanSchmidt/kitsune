@@ -20,7 +20,16 @@ func FromBase62(s string) (uuid.UUID, error) {
 		return uuid.UUID{}, fmt.Errorf("cannot parse base62: %q", s)
 	}
 
+	if i.Sign() < 0 {
+		return uuid.UUID{}, fmt.Errorf("cannot parse base62: %q is negative", s)
+	}
+	b := i.Bytes()
+	if len(b) > len(uuid.UUID{}) {
+		return uuid.UUID{}, fmt.Errorf("cannot parse base62: %q is longer than a UUID", s)
+	}
+	// Bytes drops leading zero bytes; right-align so UUIDs starting with
+	// zero bytes decode to themselves.
 	var id uuid.UUID
-	copy(id[:], i.Bytes())
+	copy(id[len(id)-len(b):], b)
 	return id, nil
 }
